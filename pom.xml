@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>gob.mdmq.mdmq_indicadores_consumer</groupId>
 	<artifactId>mdmq_indicadores_consumer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>mdmq_indicadores_consumer</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

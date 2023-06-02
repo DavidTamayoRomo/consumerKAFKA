@@ -19,7 +19,7 @@ public class Consumer {
     @Autowired
     public DatoService datoService;
 
-    @KafkaListener(topics = { "1" })
+    @KafkaListener(topics = { "temaBroker-2" }, groupId = "Group100")
     public void consumeMessage(String message, Acknowledgment acknowledgment) throws JsonProcessingException {
         try {
             ObjectMapper mapper = new ObjectMapper();
