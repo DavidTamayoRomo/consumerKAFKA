@@ -1,9 +1,13 @@
 package gob.mdmq.mdmq_indicadores_consumer.mdmq_indicadores_consumer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RestController
+@RequestMapping("/datos")
 public class Consumer {
+
+    private final MongoTemplate mongoTemplate;
+
+    public Consumer(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Autowired
     public DatoService datoService;
@@ -24,8 +36,12 @@ public class Consumer {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Datos datos = mapper.readValue(message, Datos.class);
-            datoService.save(datos);
-            log.info("Transformado", datos);
+            //datoService.save(datos);
+            //Obtener en de la coleccion el sistema en el que se va a almacenar
+            Object SISTEMA = datos.getDatos().get("SISTEMA");
+            mongoTemplate.save(datos,SISTEMA.toString());
+            
+            log.info("Transformado", datos.getDatos().get("datos"));
             log.info("Mensaje recibido: {}", message);
             acknowledgment.acknowledge(); 
         } catch (Exception e) {
@@ -33,4 +49,36 @@ public class Consumer {
         }
         
     }
+
+
+    @GetMapping
+    public Object listarDatos() throws JsonProcessingException {
+        try {
+            return datoService.listarDatos();
+        } catch (Exception e) {
+            return "Error al enviar el mensaje";
+        }
+    }
+
+
+    /* @GetMapping
+    public Slice<Object> listarDatos(@RequestParam(defaultValue = "0") int page) throws JsonProcessingException {
+
+        try {
+            int pageSize = 10000;
+            Pageable pageable = PageRequest.of(page, pageSize);
+
+            Page<Object> coleccionPage = (Page<Object>) datoService.listarDatosPag(pageable);
+
+            // Convertir el Page en un Slice para mantener la información de si hay más
+            // elementos
+            Slice<Object> coleccionSlice = new SliceImpl<>(coleccionPage.getContent(), pageable,
+                    coleccionPage.hasNext());
+
+            return coleccionSlice;//datoService.listarDatos();
+        } catch (Exception e) {
+            return "Error al enviar el mensaje";
+        }
+
+    } */
 }

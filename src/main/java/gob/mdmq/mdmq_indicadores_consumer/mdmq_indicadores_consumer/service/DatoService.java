@@ -1,6 +1,7 @@
 package gob.mdmq.mdmq_indicadores_consumer.mdmq_indicadores_consumer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gob.mdmq.mdmq_indicadores_consumer.mdmq_indicadores_consumer.model.Datos;
@@ -19,4 +20,11 @@ public class DatoService {
         datoRepository.save(dato);
     }
 
+    public Object listarDatos() {
+        return datoRepository.findAll();
+    }
+
+    public Object listarDatosPag(Pageable pageable) {
+        return datoRepository.findAll(pageable);
+    }
 }
