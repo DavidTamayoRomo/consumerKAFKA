@@ -44,7 +44,12 @@ public class Consumer {
             // datoService.save(datos);
             // Obtener en de la coleccion el sistema en el que se va a almacenar
             Object SISTEMA = datos.getDatos().get("SISTEMA");
-            mongoTemplate.save(datos, SISTEMA.toString());
+            if (SISTEMA.toString().equals("recolectorstl")) {
+                mongoTemplate.save(datos.getDatos(), SISTEMA.toString().toLowerCase());
+            }else{
+                mongoTemplate.save(datos, SISTEMA.toString().toUpperCase());
+            }
+            
 
             //log.info("Transformado", datos.getDatos().get("datos"));
             //log.info("Mensaje recibido: {}", message);
